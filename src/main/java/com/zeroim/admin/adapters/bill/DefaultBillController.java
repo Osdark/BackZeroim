@@ -76,6 +76,20 @@ public class DefaultBillController implements BillController {
         }
     }
 
+    @Override
+    public ResponseEntity<Response<Boolean>> payBill(UUID id) {
+        Response<Boolean> response = new Response<>();
+        ResError error = new ResError();
+        Boolean billPaidOut = commandFacade.payBill(id);
+        response.setData(billPaidOut);
+
+        if (Objects.equals(billPaidOut, false)) {
+            return getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "Bill couldn't be paid");
+        } else {
+            return getResponseEntityOk(response, error);
+        }
+    }
+
     private <T> ResponseEntity<Response<T>> getResponseEntityOk(Response<T> response, ResError error) {
         response.setError(error);
         return ResponseEntity.ok().body(response);
@@ -86,6 +100,6 @@ public class DefaultBillController implements BillController {
         error.setErrorCode(status.value());
         error.setMessage(message);
         response.setError(error);
-        return ResponseEntity.status(status).build();
+        return ResponseEntity.status(status).body(response);
     }
 }

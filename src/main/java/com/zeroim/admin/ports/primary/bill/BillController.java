@@ -19,4 +19,7 @@ public interface BillController {
 
     @GetMapping("/getById")
     ResponseEntity<Response<BillDTO>> getById(@RequestParam("id") UUID id);
+
+    @PutMapping("/pay")
+    ResponseEntity<Response<Boolean>> payBill(@RequestParam("id") UUID id);
 }

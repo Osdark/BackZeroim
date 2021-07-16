@@ -1,5 +1,7 @@
 package com.zeroim.admin.facades.command.bill;
 
-public interface BillCommandFacade {
+import java.util.UUID;
 
+public interface BillCommandFacade {
+    Boolean payBill(UUID id);
 }

@@ -6,6 +6,7 @@ import com.zeroim.admin.ports.secondary.bill.BillRepo;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -32,5 +33,16 @@ public class DefaultBillService implements BillService {
     @Override
     public Bill getById(UUID id) {
         return repo.findById(id).get();
+    }
+
+    @Override
+    public Boolean payBill(UUID id) {
+        Optional<Bill> bill = repo.findById(id);
+        if (bill.isPresent()) {
+            bill.get().setPaidOut(true);
+            repo.save(bill.get());
+            return true;
+        }
+        return false;
     }
 }

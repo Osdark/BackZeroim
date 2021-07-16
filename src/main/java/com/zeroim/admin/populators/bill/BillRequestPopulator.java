@@ -9,7 +9,7 @@ import java.util.UUID;
 public class BillRequestPopulator implements Populator<BillDTO, Bill> {
     @Override
     public void populate(BillDTO billDTO, Bill bill) {
-        bill.setId(billDTO.getId());
+        bill.setId(UUID.randomUUID());
         bill.setBillNumber(billDTO.getBillNumber());
         bill.setBillDetail((UUID[]) billDTO.getBillDetail().toArray());
         bill.setClientId(billDTO.getClientId());

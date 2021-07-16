@@ -11,4 +11,6 @@ public interface BillService {
     List<Bill> getAll();
 
     Bill getById(UUID id);
+
+    Boolean payBill(UUID id);
 }

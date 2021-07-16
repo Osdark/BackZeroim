@@ -5,6 +5,7 @@ import com.zeroim.admin.requests.util.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
 
 @ControllerAdvice
 public class ErrorHandler {
@@ -14,5 +15,13 @@ public class ErrorHandler {
         response.setData(e.getClass().toString());
         response.setError(new ResError(404, e.getMessage()));
         return ResponseEntity.badRequest().body(response);
+    }
+
+    @ExceptionHandler(value = HttpClientErrorException.NotFound.class)
+    public ResponseEntity<Response<String>> handleNotFound(HttpClientErrorException.NotFound n) {
+        Response<String> response = new Response<>();
+        response.setData(n.getClass().toString());
+        response.setError(new ResError(404, n.getMessage()));
+        return ResponseEntity.status(404).body(response);
     }
 }
