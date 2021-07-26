@@ -4,15 +4,17 @@ import com.zeroim.admin.adapters.admin.AdminLoginService;
 import com.zeroim.admin.converter.Converter;
 import com.zeroim.admin.domain.admin.Admin;
 import com.zeroim.admin.populators.Populator;
-import com.zeroim.admin.populators.admin.*;
+import com.zeroim.admin.populators.admin.AdminResponsePopulator;
+import com.zeroim.admin.populators.admin.LoginAdminPopulator;
+import com.zeroim.admin.populators.admin.UpdatePasswordDTOAdminPopulator;
 import com.zeroim.admin.ports.primary.admin.AdminService;
 import com.zeroim.admin.requests.admin.AdminDTO;
 import com.zeroim.admin.requests.admin.RequestAdminLoginDTO;
 import com.zeroim.admin.requests.admin.RequestUpdatePasswordDTO;
+import com.zeroim.admin.util.BussinessExceptions.AdminLoggedException;
 import com.zeroim.admin.util.BussinessExceptions.InvalidPasswordException;
 import com.zeroim.admin.util.Constants;
 import com.zeroim.admin.util.JwtUtil;
-import io.jsonwebtoken.lang.Objects;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,14 +47,19 @@ public class DefaultAdminCommandFacade implements AdminCommandFacade {
     }
 
     @Override
-    public AdminDTO login(RequestAdminLoginDTO adminLoginDTO) {
+    public AdminDTO login(RequestAdminLoginDTO adminLoginDTO) throws AdminLoggedException, InvalidPasswordException {
         Admin admin = service.findByUsername(adminLoginDTO.getUsername());
         boolean validPassword = BCrypt.checkpw(adminLoginDTO.getPassword(), admin.getPassword());
         if (!admin.getToken().isEmpty()) {
-            return null;
+            service.logout(admin.getId());
+            throw new AdminLoggedException("Admin already logged");
         }
         generateAdminSessionToken(admin);
-        return validPassword ? convertAdmin(service.login(admin)) : null;
+        if (validPassword) {
+            return convertAdmin(service.login(admin));
+        } else {
+            throw new InvalidPasswordException("Invalid credentials");
+        }
     }
 
     @Override

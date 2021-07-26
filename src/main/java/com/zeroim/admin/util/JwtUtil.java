@@ -3,6 +3,7 @@ package com.zeroim.admin.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,8 @@ import java.util.function.Function;
 
 @Service
 public class JwtUtil {
-    private final String SECRET_KEY = "5C7D0551C43EEDE566200A5A5ABDEEBFA771B342566824F2D73ADAE96062498E";
+    @Value("${application.jwt.secret-key}")
+    private String SECRET_KEY;
 
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);

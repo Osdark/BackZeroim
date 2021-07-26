@@ -2,6 +2,7 @@ package com.zeroim.admin.util;
 
 import com.zeroim.admin.requests.util.ResError;
 import com.zeroim.admin.requests.util.Response;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,5 +40,13 @@ public class ErrorHandler {
         response.setData(npe.getClass().toString());
         response.setError(new ResError(404, "not found"));
         return ResponseEntity.status(404).body(response);
+    }
+
+    @ExceptionHandler(value = ExpiredJwtException.class)
+    public ResponseEntity<Response<String>> handleNullPointerException(ExpiredJwtException eje) {
+        Response<String> response = new Response<>();
+        response.setData("Session expired");
+        response.setError(new ResError(500, "Session expired"));
+        return ResponseEntity.status(500).body(response);
     }
 }

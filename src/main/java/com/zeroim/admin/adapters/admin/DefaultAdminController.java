@@ -9,6 +9,7 @@ import com.zeroim.admin.requests.admin.RequestAdminLoginDTO;
 import com.zeroim.admin.requests.admin.RequestUpdatePasswordDTO;
 import com.zeroim.admin.requests.util.ResError;
 import com.zeroim.admin.requests.util.Response;
+import com.zeroim.admin.util.BussinessExceptions.AdminLoggedException;
 import com.zeroim.admin.util.BussinessExceptions.InvalidPasswordException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,7 +49,8 @@ public class DefaultAdminController implements AdminController {
     }
 
     @Override
-    public ResponseEntity<Response<AdminDTO>> login(RequestAdminLoginDTO adminLoginDTO) {
+    public ResponseEntity<Response<AdminDTO>> login(RequestAdminLoginDTO adminLoginDTO)
+            throws AdminLoggedException, InvalidPasswordException {
         Response<AdminDTO> response = new Response<>();
         ResError error = new ResError();
         AdminDTO adminDTO = commandFacade.login(adminLoginDTO);
