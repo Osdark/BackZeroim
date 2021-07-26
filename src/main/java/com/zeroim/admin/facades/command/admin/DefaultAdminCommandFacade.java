@@ -47,18 +47,23 @@ public class DefaultAdminCommandFacade implements AdminCommandFacade {
     }
 
     @Override
-    public AdminDTO login(RequestAdminLoginDTO adminLoginDTO) throws AdminLoggedException, InvalidPasswordException {
+    public AdminDTO login(RequestAdminLoginDTO adminLoginDTO)
+            throws AdminLoggedException, InvalidPasswordException {
         Admin admin = service.findByUsername(adminLoginDTO.getUsername());
         boolean validPassword = BCrypt.checkpw(adminLoginDTO.getPassword(), admin.getPassword());
-        if (!admin.getToken().isEmpty()) {
-            service.logout(admin.getId());
-            throw new AdminLoggedException("Admin already logged");
-        }
+        isAdminLogged(admin);
         generateAdminSessionToken(admin);
         if (validPassword) {
             return convertAdmin(service.login(admin));
         } else {
             throw new InvalidPasswordException("Invalid credentials");
+        }
+    }
+
+    private void isAdminLogged(Admin admin) throws AdminLoggedException {
+        if (!admin.getToken().isEmpty()) {
+            service.logout(admin.getId());
+            throw new AdminLoggedException("Admin already logged");
         }
     }
 

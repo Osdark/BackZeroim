@@ -12,5 +12,5 @@ public interface BuyerService {
 
     List<Buyer> getAll();
 
-    Boolean updateBuyer(Buyer buyer);
+    Boolean updateBuyer(Buyer buyer, UUID id);
 }

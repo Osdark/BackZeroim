@@ -11,6 +11,8 @@ import com.zeroim.admin.requests.buyer.RequestCreateBuyerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
+
 @Component
 public class DefaultBuyerCommandFacade implements BuyerCommandFacade {
     @Autowired
@@ -26,8 +28,8 @@ public class DefaultBuyerCommandFacade implements BuyerCommandFacade {
     }
 
     @Override
-    public Boolean updateBuyer(RequestCreateBuyerDTO buyerDTO) {
-        return service.updateBuyer(convertCreateBuyerDTO(buyerDTO));
+    public Boolean updateBuyer(RequestCreateBuyerDTO buyerDTO, UUID id) {
+        return service.updateBuyer(convertCreateBuyerDTO(buyerDTO), id);
     }
 
     private BuyerDTO convertBuyer(Buyer buyer) {

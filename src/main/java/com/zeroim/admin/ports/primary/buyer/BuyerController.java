@@ -21,5 +21,5 @@ public interface BuyerController {
     ResponseEntity<Response<List<BuyerDTO>>> getAll();
 
     @PutMapping("/update")
-    ResponseEntity<Response<Boolean>> updateBuyer(@RequestBody RequestCreateBuyerDTO buyerDTO);
+    ResponseEntity<Response<Boolean>> updateBuyer(@RequestBody RequestCreateBuyerDTO buyerDTO, @RequestParam("id") UUID id);
 }

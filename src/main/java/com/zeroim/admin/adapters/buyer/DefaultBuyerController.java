@@ -75,10 +75,10 @@ public class DefaultBuyerController implements BuyerController {
     }
 
     @Override
-    public ResponseEntity<Response<Boolean>> updateBuyer(RequestCreateBuyerDTO buyerDTO) {
+    public ResponseEntity<Response<Boolean>> updateBuyer(RequestCreateBuyerDTO buyerDTO, UUID id) {
         Response<Boolean> response = new Response<>();
         ResError error = new ResError();
-        Boolean updated = commandFacade.updateBuyer(buyerDTO);
+        Boolean updated = commandFacade.updateBuyer(buyerDTO, id);
         response.setData(updated);
 
         if (updated) {

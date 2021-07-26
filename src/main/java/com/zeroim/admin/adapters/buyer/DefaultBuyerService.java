@@ -37,10 +37,10 @@ public class DefaultBuyerService implements BuyerService {
     }
 
     @Override
-    public Boolean updateBuyer(Buyer buyer) {
-        Optional<Buyer> buyerDB = repo.findById(buyer.getId());
+    public Boolean updateBuyer(Buyer buyer, UUID id) {
+        Optional<Buyer> buyerDB = repo.findById(id);
         if (buyerDB.isPresent()) {
-            repo.deleteById(buyer.getId());
+            repo.deleteById(buyerDB.get().getId());
             repo.save(buyer);
             return true;
         }

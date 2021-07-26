@@ -1,10 +1,8 @@
-package com.zeroim.admin.domain.product;
+package com.zeroim.admin.requests.product;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -12,9 +10,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "Product")
-public class Product {
-    @Id
+public class RequestUpdateProductDTO {
     private UUID id;
     private String code;
     private String name;
