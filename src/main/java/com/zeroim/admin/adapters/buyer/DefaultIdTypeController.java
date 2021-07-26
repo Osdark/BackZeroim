@@ -1,5 +1,6 @@
 package com.zeroim.admin.adapters.buyer;
 
+import com.zeroim.admin.adapters.util.ControllerUtils;
 import com.zeroim.admin.facades.command.buyer.IdTypeCommandFacade;
 import com.zeroim.admin.facades.query.buyer.IdTypeQueryFacade;
 import com.zeroim.admin.ports.primary.buyer.IdTypeController;
@@ -21,10 +22,13 @@ public class DefaultIdTypeController implements IdTypeController {
     private final IdTypeCommandFacade commandFacade;
     @Autowired
     private final IdTypeQueryFacade queryFacade;
+    @Autowired
+    private final ControllerUtils utils;
 
-    public DefaultIdTypeController(IdTypeCommandFacade commandFacade, IdTypeQueryFacade queryFacade) {
+    public DefaultIdTypeController(IdTypeCommandFacade commandFacade, IdTypeQueryFacade queryFacade, ControllerUtils utils) {
         this.commandFacade = commandFacade;
         this.queryFacade = queryFacade;
+        this.utils = utils;
     }
 
     @Override
@@ -35,9 +39,9 @@ public class DefaultIdTypeController implements IdTypeController {
         response.setData(idTypeCreated);
 
         if (Objects.isNull(idTypeCreated)) {
-            return getBadResponseEntity(response, error, HttpStatus.INTERNAL_SERVER_ERROR, "IdType not created");
+            return utils.getBadResponseEntity(response, error, HttpStatus.INTERNAL_SERVER_ERROR, "IdType not created");
         } else {
-            return getResponseEntityOk(response, error);
+            return utils.getResponseEntityOk(response, error);
         }
     }
 
@@ -49,9 +53,9 @@ public class DefaultIdTypeController implements IdTypeController {
         response.setData(idTypeDTOList);
 
         if (Objects.isNull(idTypeDTOList)) {
-            return getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "IdType list not found");
+            return utils.getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "IdType list not found");
         } else {
-            return getResponseEntityOk(response, error);
+            return utils.getResponseEntityOk(response, error);
         }
     }
 
@@ -63,9 +67,9 @@ public class DefaultIdTypeController implements IdTypeController {
         response.setData(idTypeDTO);
 
         if (Objects.isNull(idTypeDTO)) {
-            return getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "IdType not found");
+            return utils.getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "IdType not found");
         } else {
-            return getResponseEntityOk(response, error);
+            return utils.getResponseEntityOk(response, error);
         }
     }
 
@@ -77,22 +81,9 @@ public class DefaultIdTypeController implements IdTypeController {
         response.setData(deleted);
 
         if (Objects.equals(deleted, 0)) {
-            return getBadResponseEntity(response, error, HttpStatus.INTERNAL_SERVER_ERROR, "IdType not deleted");
+            return utils.getBadResponseEntity(response, error, HttpStatus.INTERNAL_SERVER_ERROR, "IdType not deleted");
         } else {
-            return getResponseEntityOk(response, error);
+            return utils.getResponseEntityOk(response, error);
         }
-    }
-
-    private <T> ResponseEntity<Response<T>> getResponseEntityOk(Response<T> response, ResError error) {
-        response.setError(error);
-        return ResponseEntity.ok().body(response);
-    }
-
-    private <T> ResponseEntity<Response<T>> getBadResponseEntity(Response<T> response, ResError error,
-                                                                 HttpStatus status, String message) {
-        error.setErrorCode(status.value());
-        error.setMessage(message);
-        response.setError(error);
-        return ResponseEntity.status(status).build();
     }
 }

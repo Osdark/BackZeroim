@@ -24,4 +24,20 @@ public class ErrorHandler {
         response.setError(new ResError(404, n.getMessage()));
         return ResponseEntity.status(404).body(response);
     }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<Response<String>> handleIllegalArgumentException(IllegalArgumentException iae) {
+        Response<String> response = new Response<>();
+        response.setData(iae.getClass().toString());
+        response.setError(new ResError(404, iae.getMessage()));
+        return ResponseEntity.status(404).body(response);
+    }
+
+    @ExceptionHandler(value = NullPointerException.class)
+    public ResponseEntity<Response<String>> handleNullPointerException(NullPointerException npe) {
+        Response<String> response = new Response<>();
+        response.setData(npe.getClass().toString());
+        response.setError(new ResError(404, "not found"));
+        return ResponseEntity.status(404).body(response);
+    }
 }

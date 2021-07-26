@@ -5,10 +5,12 @@ import com.zeroim.admin.ports.primary.admin.AdminService;
 import com.zeroim.admin.ports.secondary.admin.AdminRepo;
 import com.zeroim.admin.requests.admin.RequestUpdatePasswordDTO;
 import com.zeroim.admin.util.BussinessExceptions.InvalidPasswordException;
+import io.jsonwebtoken.lang.Objects;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class DefaultAdminService implements AdminService {
@@ -25,12 +27,9 @@ public class DefaultAdminService implements AdminService {
 
     @Override
     public Admin login(Admin admin) {
-        Optional<Admin> adminDB = repo.findById(admin.getId());
-        if (adminDB.isPresent()) {
-            admin.setLastLogin(new Date());
-            return repo.save(admin);
-        }
-        return null;
+        admin.setLastLogin(new Date());
+        admin.setLogged(true);
+        return repo.save(admin);
     }
 
     @Override
@@ -55,5 +54,17 @@ public class DefaultAdminService implements AdminService {
     @Override
     public Admin findByUsername(String username) {
         return repo.findByUsername(username);
+    }
+
+    @Override
+    public Boolean logout(UUID id) {
+        Optional<Admin> admin = repo.findById(id);
+        if (admin.isPresent()) {
+            admin.get().setLogged(false);
+            admin.get().setToken("");
+            repo.save(admin.get());
+            return true;
+        }
+        return false;
     }
 }

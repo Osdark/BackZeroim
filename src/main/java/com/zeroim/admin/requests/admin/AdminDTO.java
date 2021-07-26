@@ -14,4 +14,5 @@ public class AdminDTO {
     private UUID id;
     private String username;
     private Date lastLogin;
+    private String token;
 }

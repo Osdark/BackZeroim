@@ -1,5 +1,6 @@
 package com.zeroim.admin.adapters.bill;
 
+import com.zeroim.admin.adapters.util.ControllerUtils;
 import com.zeroim.admin.facades.command.bill.BillDetailCommandFacade;
 import com.zeroim.admin.facades.query.bill.BillDetailQueryFacade;
 import com.zeroim.admin.ports.primary.bill.BillDetailController;
@@ -20,10 +21,13 @@ public class DefaultBillDetailController implements BillDetailController {
     private final BillDetailCommandFacade commandFacade;
     @Autowired
     private final BillDetailQueryFacade queryFacade;
+    @Autowired
+    private final ControllerUtils utils;
 
-    public DefaultBillDetailController(BillDetailCommandFacade commandFacade, BillDetailQueryFacade queryFacade) {
+    public DefaultBillDetailController(BillDetailCommandFacade commandFacade, BillDetailQueryFacade queryFacade, ControllerUtils utils) {
         this.commandFacade = commandFacade;
         this.queryFacade = queryFacade;
+        this.utils = utils;
     }
 
     @Override
@@ -35,14 +39,9 @@ public class DefaultBillDetailController implements BillDetailController {
         if (Objects.isNull(billDetailDTO)) {
             error.setErrorCode(HttpStatus.NOT_FOUND.value());
             error.setMessage("Bill detail not found");
-            return getResponseEntity(response, error, HttpStatus.NOT_FOUND);
+            return utils.getResponseEntity(response, error, HttpStatus.NOT_FOUND);
         } else {
-            return getResponseEntity(response, error, HttpStatus.OK);
+            return utils.getResponseEntity(response, error, HttpStatus.OK);
         }
-    }
-
-    private <T> ResponseEntity<Response<T>> getResponseEntity(Response<T> response, ResError error, HttpStatus status) {
-        response.setError(error);
-        return ResponseEntity.status(status).body(response);
     }
 }

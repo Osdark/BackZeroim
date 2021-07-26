@@ -1,5 +1,6 @@
 package com.zeroim.admin.adapters.bill;
 
+import com.zeroim.admin.adapters.util.ControllerUtils;
 import com.zeroim.admin.facades.command.bill.BillCommandFacade;
 import com.zeroim.admin.facades.query.bill.BillQueryFacade;
 import com.zeroim.admin.operations.bill.BillOperations;
@@ -25,12 +26,15 @@ public class DefaultBillController implements BillController {
     private final BillOperations operations;
     @Autowired
     private final BillQueryFacade queryFacade;
+    @Autowired
+    private final ControllerUtils utils;
 
     public DefaultBillController(BillCommandFacade commandFacade, BillOperations operations,
-                                 BillQueryFacade queryFacade) {
+                                 BillQueryFacade queryFacade, ControllerUtils utils) {
         this.commandFacade = commandFacade;
         this.operations = operations;
         this.queryFacade = queryFacade;
+        this.utils = utils;
     }
 
     @Override
@@ -41,9 +45,9 @@ public class DefaultBillController implements BillController {
         response.setData(billDTO);
 
         if (Objects.isNull(billDTO)) {
-            return getBadResponseEntity(response, error, HttpStatus.INTERNAL_SERVER_ERROR, "Bill not created");
+            return utils.getBadResponseEntity(response, error, HttpStatus.INTERNAL_SERVER_ERROR, "Bill not created");
         } else {
-            return getResponseEntityOk(response, error);
+            return utils.getResponseEntityOk(response, error);
         }
     }
 
@@ -56,9 +60,9 @@ public class DefaultBillController implements BillController {
         response.setData(billDTOS);
 
         if (Objects.isNull(billDTOS)) {
-            return getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "List not found");
+            return utils.getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "List not found");
         } else {
-            return getResponseEntityOk(response, error);
+            return utils.getResponseEntityOk(response, error);
         }
     }
 
@@ -70,9 +74,9 @@ public class DefaultBillController implements BillController {
         response.setData(billDTO);
 
         if (Objects.isNull(billDTO)) {
-            return getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "List not found");
+            return utils.getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "List not found");
         } else {
-            return getResponseEntityOk(response, error);
+            return utils.getResponseEntityOk(response, error);
         }
     }
 
@@ -84,22 +88,9 @@ public class DefaultBillController implements BillController {
         response.setData(billPaidOut);
 
         if (Objects.equals(billPaidOut, false)) {
-            return getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "Bill couldn't be paid");
+            return utils.getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "Bill couldn't be paid");
         } else {
-            return getResponseEntityOk(response, error);
+            return utils.getResponseEntityOk(response, error);
         }
-    }
-
-    private <T> ResponseEntity<Response<T>> getResponseEntityOk(Response<T> response, ResError error) {
-        response.setError(error);
-        return ResponseEntity.ok().body(response);
-    }
-
-    private <T> ResponseEntity<Response<T>> getBadResponseEntity(Response<T> response, ResError error,
-                                                                 HttpStatus status, String message) {
-        error.setErrorCode(status.value());
-        error.setMessage(message);
-        response.setError(error);
-        return ResponseEntity.status(status).body(response);
     }
 }

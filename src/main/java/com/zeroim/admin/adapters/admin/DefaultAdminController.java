@@ -1,5 +1,6 @@
 package com.zeroim.admin.adapters.admin;
 
+import com.zeroim.admin.adapters.util.ControllerUtils;
 import com.zeroim.admin.facades.command.admin.AdminCommandFacade;
 import com.zeroim.admin.facades.query.admin.AdminQueryFacade;
 import com.zeroim.admin.ports.primary.admin.AdminController;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
+import java.util.UUID;
 
 @RestController
 public class DefaultAdminController implements AdminController {
@@ -22,23 +24,26 @@ public class DefaultAdminController implements AdminController {
     private final AdminCommandFacade commandFacade;
     @Autowired
     private final AdminQueryFacade queryFacade;
+    @Autowired
+    private final ControllerUtils utils;
 
-    public DefaultAdminController(AdminCommandFacade commandFacade, AdminQueryFacade queryFacade) {
+    public DefaultAdminController(AdminCommandFacade commandFacade, AdminQueryFacade queryFacade, ControllerUtils utils) {
         this.commandFacade = commandFacade;
         this.queryFacade = queryFacade;
+        this.utils = utils;
     }
 
     @Override
-    public ResponseEntity<Response<AdminDTO>> create(AdminDTO adminDTO) {
+    public ResponseEntity<Response<AdminDTO>> create(RequestAdminLoginDTO createAdminDTO) {
         Response<AdminDTO> response = new Response<>();
         ResError error = new ResError();
-        adminDTO = commandFacade.create(adminDTO);
+        AdminDTO adminDTO = commandFacade.create(createAdminDTO);
         response.setData(adminDTO);
 
         if (Objects.isNull(adminDTO)) {
-            return getBadResponseEntity(response, error, "Admin not created");
+            return utils.getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "Admin not created");
         } else {
-            return getResponseEntityOk(response, error);
+            return utils.getResponseEntityOk(response, error);
         }
     }
 
@@ -50,9 +55,9 @@ public class DefaultAdminController implements AdminController {
         response.setData(adminDTO);
 
         if (Objects.isNull(adminDTO)) {
-            return getBadResponseEntity(response, error, "Admin not logged in");
+            return utils.getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "Admin not logged in");
         } else {
-            return getResponseEntityOk(response, error);
+            return utils.getResponseEntityOk(response, error);
         }
     }
 
@@ -65,22 +70,23 @@ public class DefaultAdminController implements AdminController {
         response.setData(passwordUpdated);
 
         if (passwordUpdated) {
-            return getResponseEntityOk(response, error);
+            return utils.getResponseEntityOk(response, error);
         } else {
-            return getBadResponseEntity(response, error, "Admin password not updated");
+            return utils.getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "Admin password not updated");
         }
     }
 
-    private <T> ResponseEntity<Response<T>> getResponseEntityOk(Response<T> response, ResError error) {
-        response.setError(error);
-        return ResponseEntity.ok().body(response);
-    }
+    @Override
+    public ResponseEntity<Response<Boolean>> logout(UUID id) {
+        Response<Boolean> response = new Response<>();
+        ResError error = new ResError();
+        Boolean isLogout = commandFacade.logout(id);
+        response.setData(isLogout);
 
-    private <T> ResponseEntity<Response<T>> getBadResponseEntity(Response<T> response, ResError error,
-                                                                 String message) {
-        error.setErrorCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        error.setMessage(message);
-        response.setError(error);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        if (isLogout) {
+            return utils.getResponseEntityOk(response, error);
+        } else {
+            return utils.getBadResponseEntity(response, error, HttpStatus.NOT_FOUND, "Admin not exists");
+        }
     }
 }

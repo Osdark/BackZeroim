@@ -2,6 +2,7 @@ package com.zeroim.admin.configurations;
 
 import com.zeroim.admin.adapters.admin.AdminLoginService;
 import com.zeroim.admin.configurations.filter.JwtRequestFilter;
+import com.zeroim.admin.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -35,6 +36,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter imple
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/admin/security/login").permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/admin/**")
+                .hasAuthority(Constants.ADMIN.name())
+                .and()
                 .authorizeRequests()
                 .antMatchers("/swagger-ui", "/webjars/**", "/swagger-resources/**",
                         "/v2/**").permitAll()

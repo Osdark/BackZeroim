@@ -10,5 +10,6 @@ public class AdminResponsePopulator implements Populator<Admin, AdminDTO> {
         adminDTO.setId(admin.getId());
         adminDTO.setUsername(admin.getUsername());
         adminDTO.setLastLogin(admin.getLastLogin());
+        adminDTO.setToken(admin.getToken());
     }
 }
