@@ -1,8 +1,19 @@
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath 'com.google.cloud.tools:appengine-gradle-plugin:2.4.0'
+	}
+}
+
 plugins {
 	id 'org.springframework.boot' version '2.5.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
 }
+
+apply plugin: 'com.google.cloud.tools.appengine'
 
 group = 'com.zeroim'
 version = '0.0.1-SNAPSHOT'
@@ -34,12 +45,21 @@ dependencies {
 	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
 	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+	compileOnly 'com.google.appengine:appengine-api-1.0-sdk:+'
+}
+
+appengine {
+	deploy {
+		projectId = System.getenv('GOOGLE_CLOUD_PROJECT')
+		version = '1'
+	}
 }
 
 test {
